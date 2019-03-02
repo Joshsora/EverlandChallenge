@@ -32,7 +32,10 @@ You need to create a WebApi in .NET Core that :
 * Unit testing (try to show us how to mock dependency calls)
 
 ## Deliver
+We need a readme explaining the libs that you've used and the reasons you choosed that ones, is not a complete documentation file so just a quick overview about how thing are working under the hood.
 
 To deliver the code you have to send us a .rar file with all the thing that we need to run the code and test it.
+
+Email to : snak@playeverland.com and gatsbys@playeverland.com
 
 Good luck & Have fun !!
