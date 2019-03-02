@@ -28,11 +28,11 @@ You need to create a WebApi in .NET Core that :
 * Uses MySQL to persist the Accounts.
 * You need to isolate your Account domain entity from the model that you are going to return as response.
 * Take advantage of the async/await keywords.
-* You only can create an account that has a unique email and the account name is greater than 6 characters.
+* The user should only be able to create an account that has a unique email and the account name is greater than 6 characters.
 * Unit testing (try to show us how to mock dependency calls)
 
 ## Deliver
-We need a readme explaining the libs that you've used and the reasons you choosed that ones, is not a complete documentation file so just a quick overview about how things are working under the hood.
+We need a readme explaining the libs that you've used and the reasons you chose that ones, is not a complete documentation file so just a quick overview about how things are working under the hood.
 
 To deliver the code you have to send us a .rar file with all the things that we need to run the code and test it.
 
