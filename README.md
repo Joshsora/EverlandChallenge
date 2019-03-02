@@ -23,7 +23,7 @@ You need to know and have been working with :
 ## The challenge
 
 You need to create a WebApi in .NET Core that :
-* Expose a CRUD endpoint over Account resource.
+* Exposes a CRUD endpoint over Account resource.
 * Uses Redis to cache the GET verb on the Account resource (you can choose the expirity).
 * Uses MySQL to persist the Accounts.
 * You need to isolate your Account domain entity from the model that you are going to return as response.
@@ -32,9 +32,9 @@ You need to create a WebApi in .NET Core that :
 * Unit testing (try to show us how to mock dependency calls)
 
 ## Deliver
-We need a readme explaining the libs that you've used and the reasons you choosed that ones, is not a complete documentation file so just a quick overview about how thing are working under the hood.
+We need a readme explaining the libs that you've used and the reasons you choosed that ones, is not a complete documentation file so just a quick overview about how things are working under the hood.
 
-To deliver the code you have to send us a .rar file with all the thing that we need to run the code and test it.
+To deliver the code you have to send us a .rar file with all the things that we need to run the code and test it.
 
 Email to : snak@playeverland.com and gatsbys@playeverland.com
 
