@@ -14,10 +14,10 @@ namespace EverlandApi.Accounts
         {
             var entityBuilder = builder.Entity<Account>();
 
-            // Add a unique constraint on the account username
+            // Add a unique constraint on account usernames
             entityBuilder.HasIndex(a => a.Username).IsUnique();
 
-            // Add a unique constraint on an account email addresses
+            // Add a unique constraint on account email addresses
             entityBuilder.HasIndex(a => a.Email).IsUnique();
         }
     }

@@ -9,9 +9,9 @@ namespace EverlandApi.Accounts.Models
         public Guid Id { get; set; }
 
         [Required]
-        public bool ValidationEmailSent { get; set; }
+        public bool VerificationEmailSent { get; set; }
 
         [Required]
-        public bool EmailValidationRequired { get; set; }
+        public bool EmailVerificationRequired { get; set; }
     }
 }

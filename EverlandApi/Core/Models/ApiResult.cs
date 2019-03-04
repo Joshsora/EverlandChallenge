@@ -1,24 +1,37 @@
-﻿namespace EverlandApi.Core.Models
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace EverlandApi.Core.Models
 {
     public class ApiResult
     {
         public bool Success
         {
-            get { return Error == null; }
+            get { return Errors.Count == 0; }
         }
-        public ApiError Error { get; private set; }
+        public ICollection<ApiError> Errors { get; private set; }
 
-        public ApiResult(ApiError error = null)
+        public ApiResult()
         {
-            Error = error;
+            Errors = new List<ApiError>();
+        }
+
+        public ApiResult(ICollection<ApiError> errors)
+        {
+            Errors = errors.ToList();
+        }
+
+        public ApiResult(params ApiError[] errors)
+        {
+            Errors = errors.ToList();
         }
     }
 
-    public class ApiResult<DataT> : ApiResult
+    public class ApiResult<TData> : ApiResult
     {
-        public DataT Data { get; private set; }
+        public TData Data { get; private set; }
 
-        public ApiResult(DataT data)
+        public ApiResult(TData data)
         {
             Data = data;
         }

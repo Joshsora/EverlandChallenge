@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace EverlandApi.Accounts.Models
 {
@@ -20,5 +22,22 @@ namespace EverlandApi.Accounts.Models
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+
+        public static bool TryCreateFromRequest(
+            AccountCreationRequest request,
+            IPasswordHasher<Account> hasher,
+            out Account account)
+        {
+            account = new Account
+            {
+                Id = Guid.NewGuid(),
+                Username = request.Username,
+                Email = request.Email
+            };
+            account.Password = hasher.HashPassword(account, request.Password);
+
+            ICollection<ValidationResult> results = new Collection<ValidationResult>();
+            return Validator.TryValidateObject(account, new ValidationContext(account), results);
+        }
     }
 }
