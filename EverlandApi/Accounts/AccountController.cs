@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using EverlandApi.Accounts.Attributes;
+using EverlandApi.Accounts.Filters;
 using EverlandApi.Accounts.Models;
 using EverlandApi.Core;
 using EverlandApi.Core.Filters;
@@ -94,6 +98,17 @@ namespace EverlandApi.Accounts
                     EmailVerificationRequired = false,
                     VerificationEmailSent = false
                 }
+            ));
+        }
+
+        [HttpGet]
+        [ServiceFilter(typeof(RequiresAccount))]
+        public ActionResult Get(
+            [AccountTarget] Account account)
+        {
+            // Authentication succeeded, send their account information
+            return Ok(new ApiResult<AccountRetrievalResponse>(
+                AccountRetrievalResponse.FromAccount(account)
             ));
         }
     }

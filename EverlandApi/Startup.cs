@@ -1,6 +1,9 @@
 ﻿using EverlandApi.Accounts;
+using EverlandApi.Accounts.Filters;
 using EverlandApi.Accounts.Models;
+using EverlandApi.Accounts.Services;
 using EverlandApi.Core;
+using EverlandApi.Core.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -23,17 +26,19 @@ namespace EverlandApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<BCryptOptions>(
-                Configuration.GetSection("BCrypt")
-            );
-
-            ConfigureAccountsDatabase(services);
+            ConfigureAccounts(services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
-        private void ConfigureAccountsDatabase(IServiceCollection services)
+        private void ConfigureAccounts(IServiceCollection services)
         {
+            services.Configure<BCryptOptions>(
+                Configuration.GetSection("BCrypt")
+            );
             services.AddSingleton<IPasswordHasher<Account>, BCryptPasswordHasher<Account>>();
+            services.AddScoped<IAuthenticationService<Account>, AuthenticationService>();
+            services.AddScoped<RequiresAccount>();
+
             services.AddDbContext<AccountContext>(
                 opt => opt.UseMySql(Configuration.GetConnectionString("Default"))
             );

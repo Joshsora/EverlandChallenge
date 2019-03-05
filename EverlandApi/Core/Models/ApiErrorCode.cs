@@ -17,6 +17,11 @@
         /// Indicates that there was an error with the database.
         /// </summary>
         DatabaseError,
+
+        /// <summary>
+        /// Indicates that authentication failed.
+        /// </summary>
+        AuthenticationFailed,
         #endregion
 
         #region Account-specific errors

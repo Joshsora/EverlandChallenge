@@ -18,6 +18,21 @@ namespace EverlandApi.Core
             ));
         }
 
+        public ActionResult Unauthorized(object value)
+        {
+            return new UnauthorizedObjectResult(value);
+        }
+
+        public ActionResult Forbidden()
+        {
+            return new ForbiddenObjectResult();
+        }
+
+        public ActionResult Forbidden(object value)
+        {
+            return new ForbiddenObjectResult(value);
+        }
+
         public ActionResult InternalServerError()
         {
             return new InternalServerErrorObjectResult();
