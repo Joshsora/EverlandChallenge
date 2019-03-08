@@ -14,6 +14,11 @@
         InvalidRequest,
 
         /// <summary>
+        /// Indicates that an unhandled exception was thrown.
+        /// </summary>
+        UnhandledException,
+
+        /// <summary>
         /// Indicates that there was an error with the database.
         /// </summary>
         DatabaseError,

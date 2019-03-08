@@ -5,14 +5,13 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using EverlandApi.Accounts.Models;
 using EverlandApi.Core.Services;
 using EverlandApi.Core.Models;
 
 namespace EverlandApi.Accounts.Services
 {
-    public class AuthenticationService : IAuthenticationService<Account>
+    public class AccountAuthenticationService : IAuthenticationService<Account>
     {
         private class AuthorizationHeader
         {
@@ -39,15 +38,11 @@ namespace EverlandApi.Accounts.Services
             }
         }
 
-        private AccountContext _accountContext;
-        private IPasswordHasher<Account> _passwordHasher;
+        private IAccountService _accountService;
 
-        public AuthenticationService(
-            AccountContext accountContext,
-            IPasswordHasher<Account> passwordHasher)
+        public AccountAuthenticationService(IAccountService accountService)
         {
-            _accountContext = accountContext;
-            _passwordHasher = passwordHasher;
+            _accountService = accountService;
         }
 
         private AuthorizationHeader PickBestAuthenticationMethod(
@@ -103,9 +98,9 @@ namespace EverlandApi.Accounts.Services
             // TODO: Do not allow Basic authentication through HTTP
 
             if (httpContext == null)
-                throw new ArgumentNullException("httpContext");
+                throw new ArgumentNullException(nameof(httpContext));
             if (credentials == null)
-                throw new ArgumentNullException("credentials");
+                throw new ArgumentNullException(nameof(credentials));
 
             // Get the username and password from the credentials string
             byte[] data = Convert.FromBase64String(credentials);
@@ -118,8 +113,7 @@ namespace EverlandApi.Accounts.Services
             string username = parts[0], password = parts[1];
 
             // Does a user with this username exist?
-            Account account = await _accountContext.Accounts
-                .FirstOrDefaultAsync(a => a.Username == username);
+            Account account = await _accountService.GetAsync(username);
             if (account == null)
                 throw new AuthenticationException(
                     "Invalid username and/or password.",
@@ -127,16 +121,14 @@ namespace EverlandApi.Accounts.Services
                 );
 
             // Did they provide the correct password?
-            var authResult = _passwordHasher.VerifyHashedPassword(account,
-                account.Password, password);
+            var authResult = _accountService.VerifyPassword(account, password);
             switch (authResult)
             {
                 case PasswordVerificationResult.Success:
                     return account;
 
                 case PasswordVerificationResult.SuccessRehashNeeded:
-                    account.Password = _passwordHasher.HashPassword(account, password);
-                    await _accountContext.SaveChangesAsync();
+                    await _accountService.UpdatePasswordAsync(account, password);
                     return account;
 
                 default:

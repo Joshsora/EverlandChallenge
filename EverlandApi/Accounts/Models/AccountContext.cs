@@ -1,7 +1,7 @@
 ﻿using EverlandApi.Accounts.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace EverlandApi.Accounts
+namespace EverlandApi.Accounts.Models
 {
     public class AccountContext : DbContext
     {

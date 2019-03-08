@@ -8,7 +8,7 @@ namespace EverlandApi.Core.Filters
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (!context.ModelState.IsValid)
-                context.Result = new ValidationFailedResult(context.ModelState);
+                context.Result = new ValidationFailedApiResult(context.ModelState);
         }
     }
 }

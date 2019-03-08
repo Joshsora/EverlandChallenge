@@ -5,6 +5,7 @@ using EverlandApi.Accounts.Services;
 using EverlandApi.Core;
 using EverlandApi.Core.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -32,25 +33,27 @@ namespace EverlandApi
 
         private void ConfigureAccounts(IServiceCollection services)
         {
+            services.AddDbContext<AccountContext>(
+                opt => opt.UseMySql(Configuration.GetConnectionString("Default"))
+            );
+
             services.Configure<BCryptOptions>(
                 Configuration.GetSection("BCrypt")
             );
             services.AddSingleton<IPasswordHasher<Account>, BCryptPasswordHasher<Account>>();
-            services.AddScoped<IAuthenticationService<Account>, AuthenticationService>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IAuthenticationService<Account>, AccountAuthenticationService>();
             services.AddScoped<RequiresAccount>();
-
-            services.AddDbContext<AccountContext>(
-                opt => opt.UseMySql(Configuration.GetConnectionString("Default"))
-            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
-            else
+            app.UseMiddleware<ExceptionHandler>();
+            
+            if (!env.IsDevelopment())
                 app.UseHsts();
+
             app.UseHttpsRedirection();
             app.UseMvc();
         }

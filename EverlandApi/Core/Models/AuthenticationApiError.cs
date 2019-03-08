@@ -1,6 +1,6 @@
 ﻿namespace EverlandApi.Core.Models
 {
-    public class AuthenticationError : ApiError
+    public class AuthenticationApiError : ApiError
     {
         public class ErrorDetails
         {
@@ -16,7 +16,7 @@
 
         public ErrorDetails Details { get; private set; }
 
-        public AuthenticationError(string reason, AuthenticationErrorCode errorCode)
+        public AuthenticationApiError(string reason, AuthenticationErrorCode errorCode)
             : base(
                 "An error occurred while authenticating the request.",
                 ApiErrorCode.AuthenticationFailed

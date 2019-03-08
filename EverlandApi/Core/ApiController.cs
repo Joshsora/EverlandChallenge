@@ -1,46 +1,42 @@
-﻿using EverlandApi.Core.Models;
+﻿using System.Collections.Generic;
+using EverlandApi.Core.Models;
 using EverlandApi.Core.Results;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
 
 namespace EverlandApi.Core
 {
     public class ApiController : ControllerBase
     {
-        protected ActionResult HandleMySqlException(MySqlException e)
-        {
-            // By default, return a generic database error
-            return InternalServerError(new ApiResult(
-                new ApiError(
-                    "A database error occurred.",
-                    ApiErrorCode.DatabaseError
-                )
-            ));
-        }
+        /// <summary>
+        /// Produces an error ApiResult with the specified HTTP status code.
+        /// </summary>
+        public ApiResult Error(int statusCode, IEnumerable<ApiError> errors)
+            =>  new ApiResult(statusCode, new ApiResponse(errors));
 
-        public ActionResult Unauthorized(object value)
-        {
-            return new UnauthorizedObjectResult(value);
-        }
+        /// <summary>
+        /// Produces an error ApiResult with the specified HTTP status code.
+        /// </summary>
+        public ApiResult Error(int statusCode, params ApiError[] errors)
+            => Error(statusCode, errors);
 
-        public ActionResult Forbidden()
-        {
-            return new ForbiddenObjectResult();
-        }
+        /// <summary>
+        /// Produces an empty ApiResult with HTTP status 200OK.
+        /// </summary>
+        public ApiResult Success()
+            => new ApiResult(
+                StatusCodes.Status200OK,
+                ApiResponse.Empty
+            );
 
-        public ActionResult Forbidden(object value)
-        {
-            return new ForbiddenObjectResult(value);
-        }
-
-        public ActionResult InternalServerError()
-        {
-            return new InternalServerErrorObjectResult();
-        }
-
-        public ActionResult InternalServerError(object value)
-        {
-            return new InternalServerErrorObjectResult(value);
-        }
+        /// <summary>
+        /// Produces an ApiResult with HTTP status 200OK containing the
+        /// specified response data.
+        /// </summary>
+        public ApiResult Success<TData>(TData data)
+            => new ApiResult(
+                StatusCodes.Status200OK,
+                new ApiResponse<TData>(data)
+            );
     }
 }

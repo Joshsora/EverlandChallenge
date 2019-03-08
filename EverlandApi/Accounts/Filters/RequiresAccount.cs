@@ -8,6 +8,7 @@ using EverlandApi.Core.Models;
 using EverlandApi.Core.Results;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using EverlandApi.Accounts.Attributes;
+using Microsoft.AspNetCore.Http;
 
 namespace EverlandApi.Accounts.Filters
 {
@@ -88,24 +89,26 @@ namespace EverlandApi.Accounts.Filters
                 );
                 if (account == null)
                 {
-                    filterContext.Result = new UnauthorizedObjectResult(new ApiResult(
-                        new AuthenticationError(
+                    filterContext.Result = new ApiResult(
+                        StatusCodes.Status401Unauthorized,
+                        new ApiResponse(new AuthenticationApiError(
                             "Invalid username and/or password.",
                             AuthenticationErrorCode.InvalidCredentials
-                        )
-                    ));
+                        ))
+                    );
                     return;
                 }
 
                 // Is this the expected account?
                 if (expectedAccountId.HasValue && account.Id != expectedAccountId.Value)
                 {
-                    filterContext.Result = new ForbiddenObjectResult(new ApiResult(
-                        new AuthenticationError(
+                    filterContext.Result = new ApiResult(
+                        StatusCodes.Status403Forbidden,
+                        new ApiResponse(new AuthenticationApiError(
                             "You are not authorized to access the requested resource.",
                             AuthenticationErrorCode.Unauthorized
-                        )
-                    ));
+                        ))
+                    );
                     return;
                 }
 
@@ -116,9 +119,12 @@ namespace EverlandApi.Accounts.Filters
             }
             catch (AuthenticationException e)
             {
-                filterContext.Result = new UnauthorizedObjectResult(new ApiResult(
-                    new AuthenticationError(e.Message, e.ErrorCode)
-                ));
+                filterContext.Result = new ApiResult(
+                    StatusCodes.Status401Unauthorized,
+                    new ApiResponse(new AuthenticationApiError(
+                        e.Message, e.ErrorCode
+                    ))
+                );
             }
         }
     }

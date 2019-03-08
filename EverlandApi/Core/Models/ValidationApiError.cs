@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace EverlandApi.Core.Models
 {
-    public class ApiValidationError : ApiError
+    public class ValidationApiError : ApiError
     {
         public class Field
         {
@@ -24,7 +24,7 @@ namespace EverlandApi.Core.Models
 
         public IEnumerable<Field> InvalidFields { get; private set; }
 
-        public ApiValidationError(ModelStateDictionary modelState)
+        public ValidationApiError(ModelStateDictionary modelState)
             : base(
                 "An error occurred while validating the request.",
                 ApiErrorCode.InvalidRequest
