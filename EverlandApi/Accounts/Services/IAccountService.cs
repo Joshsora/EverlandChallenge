@@ -12,5 +12,6 @@ namespace EverlandApi.Accounts.Services
         Task<Account> GetAsync(string username);
         PasswordVerificationResult VerifyPassword(Account account, string password);
         Task UpdatePasswordAsync(Account account, string password);
+        Task DeleteAsync(Account account);
     }
 }

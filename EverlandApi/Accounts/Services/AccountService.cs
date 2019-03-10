@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using EverlandApi.Accounts.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.EntityFrameworkCore;
 
 namespace EverlandApi.Accounts.Services
@@ -83,6 +84,12 @@ namespace EverlandApi.Accounts.Services
         public async Task UpdatePasswordAsync(Account account, string password)
         {
             account.Password = _passwordHasher.HashPassword(account, password);
+            await _accountContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Account account)
+        {
+            _accountContext.Remove(account);
             await _accountContext.SaveChangesAsync();
         }
     }

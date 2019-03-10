@@ -117,5 +117,49 @@ namespace EverlandApi.Accounts.Controllers
                 AccountRetrievalResponse.FromAccount(account)
             );
         }
+
+        [HttpDelete]
+        [ServiceFilter(typeof(RequiresAccount))]
+        public async Task<ActionResult> Delete(
+            [AccountTarget] Account account)
+        {
+            // Authentication succeeded, delete their account
+            await _accountService.DeleteAsync(account);
+            return Success();
+        }
+
+        [HttpDelete("{id}")]
+        [ServiceFilter(typeof(RequiresApiKey))]
+        public async Task<ActionResult> Delete(Guid id)
+        {
+            Account account = await _accountService.GetAsync(id);
+            if (account == null)
+                return Error(
+                    StatusCodes.Status404NotFound,
+                    new ApiError(
+                        "An account does not exist with the specified id.",
+                        ApiErrorCode.NotFound
+                    )
+                );
+            await _accountService.DeleteAsync(account);
+            return Success();
+        }
+
+        [HttpDelete("username/{username}")]
+        [ServiceFilter(typeof(RequiresApiKey))]
+        public async Task<ActionResult> Delete(string username)
+        {
+            Account account = await _accountService.GetAsync(username);
+            if (account == null)
+                return Error(
+                    StatusCodes.Status404NotFound,
+                    new ApiError(
+                        "An account does not exist with the specified username.",
+                        ApiErrorCode.NotFound
+                    )
+                );
+            await _accountService.DeleteAsync(account);
+            return Success();
+        }
     }
 }
