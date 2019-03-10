@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using EverlandApi.Accounts.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.EntityFrameworkCore;
 
 namespace EverlandApi.Accounts.Services
@@ -30,13 +29,11 @@ namespace EverlandApi.Accounts.Services
                 errorFlags |= AccountCreationErrorFlags.InvalidAccount;
 
             // Make sure that an account does not exist with the same username
-            if ((await _accountContext.Accounts
-                    .CountAsync(a => a.Username == account.Username)) >= 1)
+            if (await IsUsernameTaken(account.Username))
                 errorFlags |= AccountCreationErrorFlags.UsernameTaken;
 
             // Make sure that an account does not exist with the same email
-            if ((await _accountContext.Accounts
-                    .CountAsync(a => a.Email == account.Email)) >= 1)
+            if (await IsEmailInUse(account.Email))
                 errorFlags |= AccountCreationErrorFlags.EmailInUse;
 
             // If there was a confliction, do not attempt to insert into the database
@@ -78,13 +75,33 @@ namespace EverlandApi.Accounts.Services
             }
         }
 
-        public PasswordVerificationResult VerifyPassword(Account account, string password)
-            => _passwordHasher.VerifyHashedPassword(account, account.Password, password);
-
         public async Task UpdatePasswordAsync(Account account, string password)
         {
             account.Password = _passwordHasher.HashPassword(account, password);
             await _accountContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> UpdateAsync(Account account, AccountUpdateRequest request)
+        {
+            AccountUpdateErrorFlags errorFlags = AccountUpdateErrorFlags.None;
+
+            if (request.Password != null)
+                account.Password = _passwordHasher.HashPassword(account, request.Password);
+            if (request.Email != null && account.Email != request.Email)
+            {
+                if (await IsEmailInUse(request.Email))
+                    errorFlags |= AccountUpdateErrorFlags.EmailInUse;
+                else
+                    account.Email = request.Email;
+            }
+
+            if (errorFlags != AccountUpdateErrorFlags.None)
+                throw new AccountUpdateException(
+                    "An error occurred while updating the account.",
+                    errorFlags
+                );
+
+            return await _accountContext.SaveChangesAsync() >= 1;
         }
 
         public async Task DeleteAsync(Account account)
@@ -92,5 +109,20 @@ namespace EverlandApi.Accounts.Services
             _accountContext.Remove(account);
             await _accountContext.SaveChangesAsync();
         }
+
+        public async Task<bool> IsUsernameTaken(string username)
+        {
+            return (await _accountContext.Accounts
+                .CountAsync(a => a.Username == username)) >= 1;
+        }
+
+        public async Task<bool> IsEmailInUse(string email)
+        {
+            return (await _accountContext.Accounts
+                       .CountAsync(a => a.Email == email)) >= 1;
+        }
+
+        public PasswordVerificationResult VerifyPassword(Account account, string password)
+            => _passwordHasher.VerifyHashedPassword(account, account.Password, password);
     }
 }

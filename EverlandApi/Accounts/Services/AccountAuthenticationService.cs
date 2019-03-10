@@ -128,7 +128,12 @@ namespace EverlandApi.Accounts.Services
                     return account;
 
                 case PasswordVerificationResult.SuccessRehashNeeded:
-                    await _accountService.UpdatePasswordAsync(account, password);
+                    await _accountService.UpdateAsync(
+                        account, new AccountUpdateRequest
+                        {
+                            Password = password
+                        }
+                    );
                     return account;
 
                 default:

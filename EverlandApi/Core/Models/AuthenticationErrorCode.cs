@@ -8,7 +8,6 @@
         NoUsableMethodFound,
         UnhandledMethod,
         MalformedCredentials,
-        InvalidCredentials,
-        Unauthorized
+        InvalidCredentials
     }
 }

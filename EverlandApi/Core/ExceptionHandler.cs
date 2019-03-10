@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using EverlandApi.Core.Models;
 using EverlandApi.Core.Results;
+using EverlandApi.Core.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -45,6 +46,15 @@ namespace EverlandApi.Core
                     new ApiResponse(new ApiError(
                         "An error occurred while trying to access the database.",
                         ApiErrorCode.DatabaseError
+                    ))
+                ));
+            }
+            catch (Exception e) when (e is AuthenticationException ae)
+            {
+                await WriteResult(httpContext, new ApiResult(
+                    StatusCodes.Status401Unauthorized,
+                    new ApiResponse(new AuthenticationApiError(
+                        ae.Message, ae.ErrorCode
                     ))
                 ));
             }

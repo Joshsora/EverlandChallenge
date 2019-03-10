@@ -1,5 +1,4 @@
 ﻿using EverlandApi.Accounts;
-using EverlandApi.Accounts.Filters;
 using EverlandApi.Accounts.Models;
 using EverlandApi.Accounts.Services;
 using EverlandApi.Core;
@@ -49,7 +48,6 @@ namespace EverlandApi
             services.AddSingleton<IPasswordHasher<Account>, BCryptPasswordHasher<Account>>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAuthenticationService<Account>, AccountAuthenticationService>();
-            services.AddScoped<RequiresAccount>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

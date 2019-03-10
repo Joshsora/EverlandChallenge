@@ -10,8 +10,12 @@ namespace EverlandApi.Accounts.Services
         Task<Account> CreateAsync(AccountCreationRequest request);
         Task<Account> GetAsync(Guid id);
         Task<Account> GetAsync(string username);
-        PasswordVerificationResult VerifyPassword(Account account, string password);
-        Task UpdatePasswordAsync(Account account, string password);
+        Task<bool> UpdateAsync(Account account, AccountUpdateRequest request);
         Task DeleteAsync(Account account);
+
+        Task<bool> IsUsernameTaken(string username);
+        Task<bool> IsEmailInUse(string email);
+
+        PasswordVerificationResult VerifyPassword(Account account, string password);
     }
 }

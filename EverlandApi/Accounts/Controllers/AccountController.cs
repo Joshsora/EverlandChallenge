@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using EverlandApi.Accounts.Attributes;
-using EverlandApi.Accounts.Filters;
+using EverlandApi.Accounts.Binders;
 using EverlandApi.Accounts.Models;
 using EverlandApi.Accounts.Services;
 using EverlandApi.Core;
@@ -72,13 +72,15 @@ namespace EverlandApi.Accounts.Controllers
         }
 
         [HttpGet]
-        [ServiceFilter(typeof(RequiresAccount))]
+        [ValidateModel]
         public ActionResult Get(
-            [AccountTarget] Account account)
+            [BindRequired, ModelBinder(
+                BinderType = typeof(AuthorizedAccountBinder)
+            )] Account account)
         {
             // Authentication succeeded, send their account information
             return Success(
-                AccountRetrievalResponse.FromAccount(account)
+                AccountRetrievalData.FromAccount(account)
             );
         }
 
@@ -96,7 +98,7 @@ namespace EverlandApi.Accounts.Controllers
                     )
                 );
             return Success(
-                AccountRetrievalResponse.FromAccount(account)
+                AccountRetrievalData.FromAccount(account)
             );
         }
 
@@ -114,14 +116,108 @@ namespace EverlandApi.Accounts.Controllers
                     )
                 );
             return Success(
-                AccountRetrievalResponse.FromAccount(account)
+                AccountRetrievalData.FromAccount(account)
             );
         }
 
+        private ActionResult HandleAccountUpdateException(
+            AccountUpdateException e)
+        {
+            var errors = new List<ApiError>();
+
+            if ((e.ErrorFlags & AccountUpdateErrorFlags.EmailInUse) != 0)
+                errors.Add(new ApiError(
+                    "An account already exists under that email address.",
+                    ApiErrorCode.AccountEmailInUse
+                ));
+
+            return Error(
+                StatusCodes.Status422UnprocessableEntity,
+                errors
+            );
+        }
+
+        [HttpPut]
+        [ValidateModel]
+        public async Task<ActionResult> Update(
+            [ModelBinder(
+                 BinderType = typeof(AuthorizedAccountBinder)
+             ), BindRequired] Account account,
+            [FromBody, BindRequired] AccountUpdateRequest request)
+        {
+            try
+            {
+                await _accountService.UpdateAsync(account, request);
+                return Success();
+            }
+            catch (AccountUpdateException e)
+            {
+                return HandleAccountUpdateException(e);
+            }
+        }
+
+        [HttpPut("{id}")]
+        [ValidateModel]
+        [ServiceFilter(typeof(RequiresApiKey))]
+        public async Task<ActionResult> Update(
+            Guid id,
+            [FromBody, BindRequired] AccountUpdateRequest request)
+        {
+            Account account = await _accountService.GetAsync(id);
+            if (account == null)
+                return Error(
+                    StatusCodes.Status404NotFound,
+                    new ApiError(
+                        "An account does not exist with the specified id.",
+                        ApiErrorCode.NotFound
+                    )
+                );
+
+            try
+            {
+                await _accountService.UpdateAsync(account, request);
+                return Success();
+            }
+            catch (AccountUpdateException e)
+            {
+                return HandleAccountUpdateException(e);
+            }
+        }
+
+        [HttpPut("username/{username}")]
+        [ValidateModel]
+        [ServiceFilter(typeof(RequiresApiKey))]
+        public async Task<ActionResult> Update(
+            string username,
+            [FromBody, BindRequired] AccountUpdateRequest request)
+        {
+            Account account = await _accountService.GetAsync(username);
+            if (account == null)
+                return Error(
+                    StatusCodes.Status404NotFound,
+                    new ApiError(
+                        "An account does not exist with the specified username.",
+                        ApiErrorCode.NotFound
+                    )
+                );
+
+            try
+            {
+                await _accountService.UpdateAsync(account, request);
+                return Success();
+            }
+            catch (AccountUpdateException e)
+            {
+                return HandleAccountUpdateException(e);
+            }
+        }
+
         [HttpDelete]
-        [ServiceFilter(typeof(RequiresAccount))]
+        [ValidateModel]
         public async Task<ActionResult> Delete(
-            [AccountTarget] Account account)
+            [BindRequired, ModelBinder(
+                 BinderType = typeof(AuthorizedAccountBinder)
+             )] Account account)
         {
             // Authentication succeeded, delete their account
             await _accountService.DeleteAsync(account);

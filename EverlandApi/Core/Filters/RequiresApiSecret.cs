@@ -22,7 +22,7 @@ namespace EverlandApi.Core.Filters
             if (secrets.Count == 0)
             {
                 context.Result = new ApiResult(
-                    StatusCodes.Status403Forbidden,
+                    StatusCodes.Status401Unauthorized,
                     new ApiResponse(new AuthenticationApiError(
                         "This action requires the X-Api-Key header to be set.",
                         AuthenticationErrorCode.MissingHeader
@@ -33,7 +33,7 @@ namespace EverlandApi.Core.Filters
 
             if (secrets.First() != _securityOptions.SecretKey)
                 context.Result = new ApiResult(
-                    StatusCodes.Status403Forbidden,
+                    StatusCodes.Status401Unauthorized,
                     new ApiResponse(new AuthenticationApiError(
                         "Incorrect X-Api-Key value.",
                         AuthenticationErrorCode.InvalidCredentials
