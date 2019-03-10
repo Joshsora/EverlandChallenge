@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using EverlandApi.Accounts.Attributes;
 using EverlandApi.Accounts.Filters;
@@ -76,6 +77,42 @@ namespace EverlandApi.Accounts.Controllers
             [AccountTarget] Account account)
         {
             // Authentication succeeded, send their account information
+            return Success(
+                AccountRetrievalResponse.FromAccount(account)
+            );
+        }
+
+        [HttpGet("{id}")]
+        [ServiceFilter(typeof(RequiresApiKey))]
+        public async Task<ActionResult> Get(Guid id)
+        {
+            Account account = await _accountService.GetAsync(id);
+            if (account == null)
+                return Error(
+                    StatusCodes.Status404NotFound,
+                    new ApiError(
+                        "An account does not exist with the specified id.",
+                        ApiErrorCode.NotFound
+                    )
+                );
+            return Success(
+                AccountRetrievalResponse.FromAccount(account)
+            );
+        }
+
+        [HttpGet("username/{username}")]
+        [ServiceFilter(typeof(RequiresApiKey))]
+        public async Task<ActionResult> Get(string username)
+        {
+            Account account = await _accountService.GetAsync(username);
+            if (account == null)
+                return Error(
+                    StatusCodes.Status404NotFound,
+                    new ApiError(
+                        "An account does not exist with the specified username.",
+                        ApiErrorCode.NotFound
+                    )
+                );
             return Success(
                 AccountRetrievalResponse.FromAccount(account)
             );

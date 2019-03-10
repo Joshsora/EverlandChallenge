@@ -3,6 +3,7 @@ using EverlandApi.Accounts.Filters;
 using EverlandApi.Accounts.Models;
 using EverlandApi.Accounts.Services;
 using EverlandApi.Core;
+using EverlandApi.Core.Filters;
 using EverlandApi.Core.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -27,6 +28,11 @@ namespace EverlandApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<SecurityOptions>(
+                Configuration.GetSection("Security")
+            );
+            services.AddScoped<RequiresApiKey>();
+
             ConfigureAccounts(services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

@@ -27,6 +27,11 @@
         /// Indicates that authentication failed.
         /// </summary>
         AuthenticationFailed,
+
+        /// <summary>
+        /// Indicates that a requested resource could not be found.
+        /// </summary>
+        NotFound,
         #endregion
 
         #region Account-specific errors

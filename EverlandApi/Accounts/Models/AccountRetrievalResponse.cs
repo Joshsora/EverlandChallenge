@@ -10,6 +10,9 @@ namespace EverlandApi.Accounts.Models
 
         public static AccountRetrievalResponse FromAccount(Account account)
         {
+            if (account == null)
+                throw new ArgumentNullException(nameof(account));
+
             return new AccountRetrievalResponse
             {
                 Id = account.Id,

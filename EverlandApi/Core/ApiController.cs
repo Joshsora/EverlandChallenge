@@ -18,7 +18,7 @@ namespace EverlandApi.Core
         /// Produces an error ApiResult with the specified HTTP status code.
         /// </summary>
         public ApiResult Error(int statusCode, params ApiError[] errors)
-            => Error(statusCode, errors);
+            => new ApiResult(statusCode, new ApiResponse(errors));
 
         /// <summary>
         /// Produces an empty ApiResult with HTTP status 200OK.
