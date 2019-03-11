@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using EverlandApi.Accounts.Binders;
 using EverlandApi.Accounts.Models;
@@ -12,12 +11,15 @@ using EverlandApi.Core.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using StackExchange.Redis;
 
 namespace EverlandApi.Accounts.Controllers
 {
     [Route("api/v1/accounts")]
     public class AccountController : ApiController
     {
+        private const int AccountGetCacheExpire = 60;
+
         private IAccountService _accountService;
 
         public AccountController(
@@ -73,6 +75,7 @@ namespace EverlandApi.Accounts.Controllers
 
         [HttpGet]
         [ValidateModel]
+        [CacheApiResult("Get:Account:Id:{account.Id}", expire: AccountGetCacheExpire)]
         public ActionResult Get(
             [BindRequired, ModelBinder(
                 BinderType = typeof(AuthorizedAccountBinder)
@@ -86,6 +89,7 @@ namespace EverlandApi.Accounts.Controllers
 
         [HttpGet("{id}")]
         [ServiceFilter(typeof(RequiresApiKey))]
+        [CacheApiResult("Get:Account:Id:{id}", expire: AccountGetCacheExpire)]
         public async Task<ActionResult> Get(Guid id)
         {
             Account account = await _accountService.GetAsync(id);
@@ -104,6 +108,7 @@ namespace EverlandApi.Accounts.Controllers
 
         [HttpGet("username/{username}")]
         [ServiceFilter(typeof(RequiresApiKey))]
+        [CacheApiResult("Get:Account:Username:{username}", expire: AccountGetCacheExpire)]
         public async Task<ActionResult> Get(string username)
         {
             Account account = await _accountService.GetAsync(username);

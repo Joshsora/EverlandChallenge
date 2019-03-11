@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace EverlandApi
 {
@@ -31,6 +32,11 @@ namespace EverlandApi
                 Configuration.GetSection("Security")
             );
             services.AddScoped<RequiresApiKey>();
+
+            services.Configure<RedisOptions>(
+                Configuration.GetSection("Redis")
+            );
+            services.AddSingleton<IRedisService, RedisService>();
 
             ConfigureAccounts(services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
