@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EverlandApi", "EverlandApi\EverlandApi.csproj", "{2070704D-452C-469F-B561-83E1B14EA81D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EverlandApi", "EverlandApi\EverlandApi.csproj", "{2070704D-452C-469F-B561-83E1B14EA81D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EverlandApi.Tests", "EverlandApi.Tests\EverlandApi.Tests.csproj", "{B1ED91DB-22B2-4DC0-AAF8-A8D386165E43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{2070704D-452C-469F-B561-83E1B14EA81D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2070704D-452C-469F-B561-83E1B14EA81D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2070704D-452C-469F-B561-83E1B14EA81D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1ED91DB-22B2-4DC0-AAF8-A8D386165E43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1ED91DB-22B2-4DC0-AAF8-A8D386165E43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1ED91DB-22B2-4DC0-AAF8-A8D386165E43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1ED91DB-22B2-4DC0-AAF8-A8D386165E43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

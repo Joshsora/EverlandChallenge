@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
@@ -36,8 +35,9 @@ namespace EverlandApi.Accounts.Models
             };
             account.Password = hasher.HashPassword(account, request.Password);
 
-            ICollection<ValidationResult> results = new Collection<ValidationResult>();
-            return Validator.TryValidateObject(account, new ValidationContext(account), results);
+            var context = new ValidationContext(account, serviceProvider: null, items: null);
+            var results = new List<ValidationResult>();
+            return Validator.TryValidateObject(account, context, results, true);
         }
     }
 }

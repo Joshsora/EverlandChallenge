@@ -11,7 +11,6 @@ using EverlandApi.Core.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using StackExchange.Redis;
 
 namespace EverlandApi.Accounts.Controllers
 {

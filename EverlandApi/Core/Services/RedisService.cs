@@ -15,18 +15,30 @@ namespace EverlandApi.Core.Services
         private JsonOutputFormatter _outputFormatter;
 
         public RedisService(
-            IOptionsMonitor<RedisOptions> redisOptions,
+            IOptions<RedisOptions> redisOptions,
             JsonOutputFormatter outputFormatter)
         {
-            _connection = ConnectionMultiplexer.Connect(
-                redisOptions.CurrentValue.ConnectionString
-            );
+            try
+            {
+                _connection = ConnectionMultiplexer.Connect(
+                    redisOptions.Value.ConnectionString
+                );
+            }
+            catch (RedisConnectionException)
+            {
+                _connection = null;
+            }
             _outputFormatter = outputFormatter;
         }
 
         public async Task CacheResult(string cacheKey, ApiResult result,
             int expire = 0)
         {
+            if (cacheKey == null)
+                throw new ArgumentNullException(nameof(cacheKey));
+            if (_connection == null)
+                return;
+
             // Store the IActionResult object as a JSON string
             using (var writer = new StringWriter())
             {
@@ -40,6 +52,11 @@ namespace EverlandApi.Core.Services
 
         public async Task<ApiResult> GetCachedResult(string cacheKey)
         {
+            if (cacheKey == null)
+                throw new ArgumentNullException(nameof(cacheKey));
+            if (_connection == null)
+                return null;
+
             RedisValue storedValue = await _connection.GetDatabase().StringGetAsync(cacheKey);
             if (storedValue == RedisValue.Null)
                 return null;

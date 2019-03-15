@@ -44,7 +44,7 @@ namespace EverlandApi
 
         private void ConfigureAccounts(IServiceCollection services)
         {
-            services.AddDbContext<AccountContext>(
+            services.AddDbContext<IAccountContext, AccountContext>(
                 opt => opt.UseMySql(Configuration.GetConnectionString("Default"))
             );
 

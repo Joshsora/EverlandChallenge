@@ -9,9 +9,9 @@ namespace EverlandApi.Core
         private BCryptOptions _options;
 
         public BCryptPasswordHasher(
-            IOptionsMonitor<BCryptOptions> configuration)
+            IOptions<BCryptOptions> configuration)
         {
-            _options = configuration.CurrentValue;
+            _options = configuration.Value;
         }
 
         public string HashPassword(TUser user, string password)

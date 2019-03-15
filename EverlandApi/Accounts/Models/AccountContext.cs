@@ -1,9 +1,8 @@
-﻿using EverlandApi.Accounts.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace EverlandApi.Accounts.Models
 {
-    public class AccountContext : DbContext
+    public class AccountContext : DbContext, IAccountContext
     {
         public DbSet<Account> Accounts { get; set; }
 

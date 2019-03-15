@@ -8,11 +8,11 @@ namespace EverlandApi.Accounts.Services
 {
     public class AccountService : IAccountService
     {
-        private AccountContext _accountContext;
+        private IAccountContext _accountContext;
         private IPasswordHasher<Account> _passwordHasher;
 
         public AccountService(
-            AccountContext accountContext,
+            IAccountContext accountContext,
             IPasswordHasher<Account> passwordHasher)
         {
             _accountContext = accountContext;
@@ -81,7 +81,7 @@ namespace EverlandApi.Accounts.Services
             await _accountContext.SaveChangesAsync();
         }
 
-        public async Task<bool> UpdateAsync(Account account, AccountUpdateRequest request)
+        public async Task UpdateAsync(Account account, AccountUpdateRequest request)
         {
             AccountUpdateErrorFlags errorFlags = AccountUpdateErrorFlags.None;
 
@@ -101,7 +101,7 @@ namespace EverlandApi.Accounts.Services
                     errorFlags
                 );
 
-            return await _accountContext.SaveChangesAsync() >= 1;
+            await _accountContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Account account)
